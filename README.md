@@ -50,9 +50,9 @@ This bash script checks DNS records for a given domain and its subdomains (optio
 
 # Error Codes
 
-`101`: Missing domain name
-`102`: Invalid record type
-`103`: Unable to reach DNS server
+* `101`: Missing domain name
+* `102`: Invalid record type
+* `103`: Unable to reach DNS server
 
 These error codes are displayed alongside descriptive error messages to guide the user when encountering issues.
 
