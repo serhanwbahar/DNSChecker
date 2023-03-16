@@ -18,9 +18,9 @@ This bash script checks DNS records for a given domain and its subdomains (optio
 ./dnsChecker.sh <domain_name> [subdomain] [record_type]
 ```
 
-`<domain_name>`: The domain name for which you want to check the DNS records (e.g., example.com).
-`[subdomain]` (optional): The subdomain to check, if required (e.g., www).
-`[record_type]` (optional): The type of DNS record you want to check. Supported record types are A, AAAA, CNAME, MX, NS, SOA, TXT, and ANY. The default is ANY, which checks all supported record types.
+* `<domain_name>`: The domain name for which you want to check the DNS records (e.g., example.com).
+* `[subdomain]` (optional): The subdomain to check, if required (e.g., www).
+* `[record_type]` (optional): The type of DNS record you want to check. Supported record types are A, AAAA, CNAME, MX, NS, SOA, TXT, and ANY. The default is ANY, which checks all supported record types.
 
 # Examples
 
