@@ -10,7 +10,7 @@ This bash script checks DNS records for a given domain and its subdomains (optio
 # Installation
 
 1. Download the script or clone the repository.
-2. Make the script executable: chmod +x dnsChecker.sh
+2. Make the script executable: `chmod +x dnsChecker.sh`
 
 # Usage
 
