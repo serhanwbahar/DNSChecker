@@ -1,40 +1,49 @@
 #!/bin/bash
 
 domain_name=$1
-record_type_arg=${2^^}
+subdomain=$2
+record_type=$3
 
-# Function to check DNS records
-check_dns_records() {
-  local record_type=$1
-  local dns_servers=("1.1.1.1" "208.67.222.222" "8.8.8.8" "8.26.56.26" "9.9.9.9")
-  
-  echo "${record_type} RECORDS"
-  
-  for dns_server in "${dns_servers[@]}"; do
-    records=$(dig +nocmd $domain_name @$dns_server $record_type +noall +answer | awk '{print substr($0, index($0,$4))}')
-    
-    if [ "$records" != "out; no servers could be reached" ]; then
-      echo $records | sed "s/${record_type}/\n&/g" | sed '/^$/d'
-      return 0
-    fi
-  done
+if [ ! -z "$subdomain" ]; then
+    domain_name="${subdomain}.${domain_name}"
+fi
 
-  echo "Error!"
-  exit 110
+if [ -z "$record_type" ]; then
+    record_type="ANY"
+fi
+
+dns_servers=(
+    "1.1.1.1"         # Cloudflare
+    "208.67.222.222"  # OpenDNS
+    "8.8.8.8"         # Google DNS
+    "8.26.56.26"      # Comodo Secure DNS
+    "9.9.9.9"         # Quad9
+)
+
+function query_record() {
+    local domain=$1
+    local dns_server=$2
+    local record=$3
+
+    echo "$(dig +nocmd "${domain}" @${dns_server} ${record} +noall +answer | awk '{print substr($0, index($0,$4))}')"
 }
 
-record_types=("A" "AAAA" "ANY" "CAA" "CNAME" "MX" "NS" "SOA" "TXT")
+function check_record() {
+    local domain=$1
+    local record=$2
 
-if [ -z "$record_type_arg" ]; then
-  for record_type in "${record_types[@]}"; do
-    check_dns_records "$record_type" $domain_name
-    echo
-  done
-else
-  if [[ " ${record_types[*]} " == *" ${record_type_arg} "* ]]; then
-    check_dns_records "$record_type_arg" $domain_name
-  else
-    echo "Invalid record type!"
-    exit 111
-  fi
-fi
+    for dns_server in "${dns_servers[@]}"; do
+        result=$(query_record "${domain}" "${dns_server}" "${record}")
+
+        if [ "${result}" != "out; no servers could be reached" ]; then
+            echo "${result}" | sed "s/${record}/\n&/g" | sed '/^$/d'
+            return
+        fi
+    done
+
+    echo "Error!"
+    exit 110
+}
+
+echo "${record_type^^} RECORDS"
+check_record "${domain_name}" "${record_type}"
